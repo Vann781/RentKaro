@@ -164,6 +164,7 @@
 // // --- Server Startup ---
 // const PORT = process.env.PORT || 5000;
 // server.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -176,21 +177,20 @@ dotenv.config();
 // --- Firebase Admin Imports/Setup ---
 const admin = require('firebase-admin');
 
-// 1. Load JSON string from environment variable (from Render's UI)
-const FIREBASE_ADMIN_CONFIG_STRING = process.env.FIREBASE_ADMIN_CONFIG;
+// 1. Load Base64 configuration string from Render environment variable
+const FIREBASE_ADMIN_CONFIG_STRING = process.env.FIREBASE_ADMIN_BASE64; // <-- Use the Base64 key
 
 // 2. Safely parse the JSON string and initialize Firebase Admin SDK
 try {
     if (!FIREBASE_ADMIN_CONFIG_STRING) {
-        throw new Error('FIREBASE_ADMIN_CONFIG environment variable is missing.');
+        throw new Error('FIREBASE_ADMIN_BASE64 environment variable is missing.');
     }
     
-    // IMPORTANT: Firebase requires the private key to have literal \n characters.
-    // We use .replace(/\\n/g, '\n') to convert the string literal "\\n" into the newline character "\n".
-    const safeConfigString = FIREBASE_ADMIN_CONFIG_STRING.replace(/\\n/g, '\n');
-    
-    const serviceAccount = JSON.parse(safeConfigString);
+    // Decode the Base64 string back into the original JSON content
+    const jsonBuffer = Buffer.from(FIREBASE_ADMIN_CONFIG_STRING, 'base64');
+    const serviceAccount = JSON.parse(jsonBuffer.toString('utf8'));
 
+    // Initialize Firebase Admin SDK
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
     });
@@ -199,7 +199,7 @@ try {
 } catch (error) {
     console.error('FATAL ERROR: Failed to initialize Firebase Admin SDK from environment variable.');
     console.error(error);
-    process.exit(1); // Exit process if critical config fails
+    process.exit(1);
 }
 // --- END FIREBASE SETUP ---
 
@@ -215,7 +215,6 @@ const conversationRoutes = require('./routes/conversationRoutes');
 
 // --- Push Notification Sender Function ---
 const sendPushNotification = async (recipientId, senderUsername, messageContent) => {
-    // ... (Your existing sendPushNotification logic remains the same) ...
     try {
         const recipient = await User.findById(recipientId).select('fcmToken');
         const token = recipient?.fcmToken;
@@ -224,6 +223,7 @@ const sendPushNotification = async (recipientId, senderUsername, messageContent)
             return console.log(`No FCM token found for user ${recipientId}. Notification skipped.`);
         }
         
+        // 1. Build the message object (using the official 'send' method structure)
         const message = {
             notification: {
                 title: `New message from ${senderUsername}`,
@@ -233,9 +233,10 @@ const sendPushNotification = async (recipientId, senderUsername, messageContent)
                 conversation_id: recipientId.toString(),
                 type: 'chat_message',
             },
-            token: token,
+            token: token, // Specify the recipient token here
         };
 
+        // 2. Send the message using the official 'send' method
         await admin.messaging().send(message); 
         console.log(`Push notification sent to ${recipientId}`);
 
@@ -262,29 +263,53 @@ const io = new Server(server, {
 
 // --- Socket.io Logic (UPDATED with Push Notifications) ---
 io.on('connection', (socket) => {
-    // ... (Socket logic remains the same) ...
+    console.log(`User connected: ${socket.id}`);
+
+    socket.on('join_room', (conversationId) => {
+        socket.join(conversationId);
+        console.log(`User ${socket.id} joined room: ${conversationId}`);
+    });
+
     socket.on('send_message', async (data) => {
         const { conversationId, senderId, content } = data;
 
         try {
             // 1. Save Message
-            const message = new Message({ conversationId, sender: senderId, content });
+            const message = new Message({
+                conversationId: conversationId,
+                sender: senderId,
+                content: content,
+            });
             await message.save();
             
             // 2. Update Conversation
-            await Conversation.findByIdAndUpdate(conversationId, { lastMessage: content, lastMessageSender: senderId, lastMessageAt: Date.now() });
+            await Conversation.findByIdAndUpdate(conversationId, {
+                lastMessage: content,
+                lastMessageSender: senderId,
+                lastMessageAt: Date.now(),
+            });
 
-            // 3. Broadcast
-            socket.to(conversationId).emit('receive_message', { conversationId: message.conversationId, senderId: message.sender, content: message.content, createdAt: message.createdAt });
+            // 3. Broadcast to others in the room
+            socket.to(conversationId).emit('receive_message', {
+                conversationId: message.conversationId,
+                senderId: message.sender,
+                content: message.content,
+                createdAt: message.createdAt,
+            });
 
             // 4. FIND RECIPIENT AND SEND PUSH NOTIFICATION
             const conversation = await Conversation.findById(conversationId).populate('participants', 'username');
-            const recipient = conversation.participants.find(p => p._id.toString() !== senderId.toString());
-            const sender = conversation.participants.find(p => p._id.toString() === senderId.toString());
+            
+            const recipient = conversation.participants
+                .find(p => p._id.toString() !== senderId.toString());
+            
+            const sender = conversation.participants
+                .find(p => p._id.toString() === senderId.toString());
 
             if (recipient && sender) {
                 sendPushNotification(recipient._id, sender.username, content);
             }
+            // END PUSH NOTIFICATION LOGIC
 
             console.log(`Message sent to room ${conversationId}: ${content}`);
         } catch (error) {
