@@ -8,7 +8,8 @@ import 'package:firebase_messaging/firebase_messaging.dart'; // Core FCM package
 
 class AuthService {
   // !! Make sure this is your Wi-Fi IP Address !!
-  final String _baseUrl = "http://192.168.76.14:5000";
+  // final String _baseUrl = "http://192.168.76.14:5000";
+  final String _baseUrl = "https://rentkaro-api.onrender.com";
 
   static const String _tokenKey = 'authToken';
   static const String _userIdKey = 'userId';

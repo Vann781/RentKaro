@@ -7,7 +7,8 @@ import '../models/item_model.dart'; // We'll need this soon
 
 class ConversationService {
   // !! Make sure this is your Wi-Fi IP Address !!
-  final String _baseUrl = "http://192.168.76.14:5000"; // <-- UPDATE THIS
+  // final String _baseUrl = "http://192.168.76.14:5000"; // <-- UPDATE THIS
+  final String _baseUrl = "https://rentkaro-api.onrender.com";
   final AuthService _authService = AuthService();
 
   // --- 1. Start or Find a Conversation ---

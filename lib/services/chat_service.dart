@@ -4,7 +4,8 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ChatService {
   // !! UPDATE THIS with your backend's IP address !!
-  final String _serverUrl = "http://192.168.76.14:5000";
+  // final String _serverUrl = "http://192.168.76.14:5000";
+  final String _serverUrl = "https://rentkaro-api.onrender.com";
 
   IO.Socket? _socket;
 

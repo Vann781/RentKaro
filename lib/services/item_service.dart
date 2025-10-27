@@ -8,7 +8,9 @@ import 'auth_service.dart';
 
 class ItemService {
   // !! Make sure this is your Wi-Fi IP Address !!
-  final String _baseUrl = "http://192.168.76.14:5000"; // <-- UPDATE THIS
+  // final String _baseUrl = "http://192.168.76.14:5000";// <-- UPDATE THIS
+  final String _baseUrl = "https://rentkaro-api.onrender.com";
+
 
   final AuthService _authService = AuthService();
 
