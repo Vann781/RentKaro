@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "18169442499",
+    "project_id": "rentkaro8865",
+    "storage_bucket": "rentkaro8865.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18169442499:android:75ef8b1523b29760123276",
+        "android_client_info": {
+          "package_name": "com.example.rentkaro_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwFz9KTP7LizkAGn93iby_sOCYM29iX34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
