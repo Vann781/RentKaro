@@ -266,9 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // --- Dummy banners --- (unchanged)
   final List<String> _bannerImages = [
-    'https://via.placeholder.com/600x250.png/FF6F00/FFFFFF?text=Rent+Sports+Gear',
-    'https://via.placeholder.com/600x250.png/0A1F44/FFFFFF?text=Electronics+Deals',
-    'https://via.placeholder.com/600x250.png/FFA000/0A1F44?text=Tools+for+Your+Project',
+    'assets/banners/banner1.png,'
+        'assets/banners/banner2.png',
+    'assets/banners/banner3.png',
   ];
   int _currentBanner = 0;
 

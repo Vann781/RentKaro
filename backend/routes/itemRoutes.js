@@ -348,7 +348,7 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const ONE_KILOMETER_IN_METERS = 1000;
+const ONE_KILOMETER_IN_METERS = 10000;
 
 // @route   POST /api/items
 // @desc    Create a new rental item listing
