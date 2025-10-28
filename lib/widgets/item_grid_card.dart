@@ -76,13 +76,19 @@ class ItemGridCard extends StatelessWidget {
                   // --- Owner & Distance ---
                   Row(
                     children: [
+                      // --- NEW FIX: Use NetworkImage for Profile Picture ---
                       CircleAvatar(
                         radius: 8,
                         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
-                        child: Text(
+                        backgroundImage: item.ownerProfilePic.isNotEmpty
+                            ? NetworkImage(item.ownerProfilePic) as ImageProvider // Use the actual URL
+                            : null, // If URL is missing, keep placeholder background
+                        child: item.ownerProfilePic.isEmpty
+                            ? Text( // Show initial if no URL
                           item.ownerUsername.isNotEmpty ? item.ownerUsername[0].toUpperCase() : '?',
                           style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-                        ),
+                        )
+                            : null,
                       ),
                       const SizedBox(width: 4.0),
                       Expanded(
