@@ -257,7 +257,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   child: Row(
                     children: [
                       Text(
-                        '\$${widget.item.pricePerDay.toStringAsFixed(2)}',
+                        '${widget.item.pricePerDay.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 28.0,
                           fontWeight: FontWeight.bold,

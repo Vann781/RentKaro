@@ -98,7 +98,7 @@ class ItemCard extends StatelessWidget {
                   children: [
                     // Price
                     Text(
-                      '\$${item.pricePerDay.toStringAsFixed(2)}',
+                      '${item.pricePerDay.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,

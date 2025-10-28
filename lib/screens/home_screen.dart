@@ -1,3 +1,4 @@
+
 // // lib/screens/home_screen.dart
 //
 // import 'package:flutter/material.dart';
@@ -16,30 +17,28 @@
 // }
 //
 // class _HomeScreenState extends State<HomeScreen> {
-//   // Services
+//   // Services (unchanged)
 //   final LocationService _locationService = LocationService();
 //   final ItemService _itemService = ItemService();
 //
-//   // State
+//   // State (unchanged)
 //   String _loadingMessage = 'Getting your location...';
 //   bool _isLoading = true;
 //   LocationData? _userLocation;
 //   List<Item> _items = [];
 //
-//   // --- Dummy banners ---
+//   // --- Dummy banners --- (unchanged)
 //   final List<String> _bannerImages = [
-//     'https://via.placeholder.com/600x250.png/FF6F00/FFFFFF?text=Rent+Sports+Gear',
-//     'https://via.placeholder.com/600x250.png/0A1F44/FFFFFF?text=Electronics+Deals', // Using Navy color
-//     'https://via.placeholder.com/600x250.png/FFA000/0A1F44?text=Tools+for+Your+Project', // Using Dark Yellow
+//     'assets/banners/banner1.png',
+//     'assets/banners/banner2.png',
+//     'assets/banners/banner3.png',
 //   ];
 //   int _currentBanner = 0;
-//   // ---
 //
-//   // --- Category Data ---
+//   // --- Category Data --- (unchanged)
 //   final List<String> _categoriesList = [
 //     'All', 'Tools', 'Electronics', 'Sports', 'Vehicles', 'Other'
 //   ];
-//   // ---
 //
 //   @override
 //   void initState() {
@@ -84,9 +83,8 @@
 //     );
 //   }
 //
-//   // --- Category Chip Widget (Styling using new theme colors) ---
+//   // --- Category Chip Widget (unchanged) ---
 //   Widget _buildCategoryChip(String category) {
-//     // You can add state logic here later to highlight the selected category
 //     final isSelected = category == 'All';
 //     return Padding(
 //       padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -104,14 +102,13 @@
 //           borderRadius: BorderRadius.circular(20.0),
 //         ),
 //         onPressed: () {
-//           // TODO: Implement filtering logic here
 //           print('Category selected: $category');
 //         },
 //       ),
 //     );
 //   }
 //
-//   // --- Banner Carousel Widget (Styling using new theme colors) ---
+//   // --- Banner Carousel Widget (unchanged) ---
 //   Widget _buildOfferCarousel() {
 //     return CarouselSlider(
 //       options: CarouselOptions(
@@ -135,7 +132,7 @@
 //               ),
 //               child: ClipRRect(
 //                 borderRadius: BorderRadius.circular(12.0),
-//                 child: Image.network(i, fit: BoxFit.cover),
+//                 child: Image.asset(i, fit: BoxFit.cover),
 //               ),
 //             );
 //           },
@@ -144,7 +141,7 @@
 //     );
 //   }
 //
-//   // --- Section Title Widget ---
+//   // --- Section Title Widget (unchanged) ---
 //   Widget _buildSectionTitle(String title) {
 //     return Padding(
 //       padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
@@ -163,10 +160,11 @@
 //       child: RefreshIndicator(
 //         onRefresh: _fetchLocationAndItems,
 //         child: CustomScrollView(
+//           // --- FIX: The CustomScrollView now starts with the Category Row ---
 //           slivers: [
-//             // --- 1. Category Row (Fixed Content) ---
+//             // --- 1. Category Row ---
 //             SliverToBoxAdapter(
-//               child: _buildCategoryRow(), // Your new category navigation
+//               child: _buildCategoryRow(),
 //             ),
 //
 //             // Loading state
@@ -264,10 +262,10 @@ class _HomeScreenState extends State<HomeScreen> {
   LocationData? _userLocation;
   List<Item> _items = [];
 
-  // --- Dummy banners --- (unchanged)
+  // --- Banner Images (unchanged) ---
   final List<String> _bannerImages = [
-    'assets/banners/banner1.png,'
-        'assets/banners/banner2.png',
+    'assets/banners/banner1.png',
+    'assets/banners/banner2.png',
     'assets/banners/banner3.png',
   ];
   int _currentBanner = 0;
@@ -302,10 +300,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // --- Category Row Widget ---
+  // --- Category Row Widget (unchanged) ---
   Widget _buildCategoryRow() {
     return Container(
-      color: Colors.white, // White strip for categories
+      color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -349,11 +347,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildOfferCarousel() {
     return CarouselSlider(
       options: CarouselOptions(
-        height: 150.0,
+        height: 190.0,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 4),
-        viewportFraction: 0.9,
-        enlargeCenterPage: true,
+        viewportFraction: 1.0,
+        enlargeCenterPage: false,
         onPageChanged: (index, reason) {
           setState(() { _currentBanner = index; });
         },
@@ -363,14 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (BuildContext context) {
             return Container(
               width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: Image.network(i, fit: BoxFit.cover),
-              ),
+              child: Image.asset(i, fit: BoxFit.cover),
             );
           },
         );
@@ -392,18 +383,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.background, // Light Grey background color
+      color: Theme.of(context).colorScheme.background,
 
       child: RefreshIndicator(
         onRefresh: _fetchLocationAndItems,
         child: CustomScrollView(
-          // --- FIX: The CustomScrollView now starts with the Category Row ---
           slivers: [
-            // --- 1. Category Row ---
-            SliverToBoxAdapter(
-              child: _buildCategoryRow(),
-            ),
-
             // Loading state
             if (_isLoading)
               SliverFillRemaining(
@@ -421,18 +406,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Data loaded state
             if (!_isLoading) ...[
-              // 2. Banners
-              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+              // 1. Banners (Now FIRST after the App Bar)
               SliverToBoxAdapter(
-                child: _buildOfferCarousel(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildOfferCarousel(),
+                ),
               ),
 
-              // 3. Title
+              // 2. CATEGORY ROW (MOVED HERE: BELOW BANNERS)
+              SliverToBoxAdapter(
+                child: _buildCategoryRow(),
+              ),
+
+              // 3. Title (Nearby Items)
               SliverToBoxAdapter(
                 child: _buildSectionTitle('Nearby Items'),
               ),
 
-              // 4. Items Grid
+              // 4. Items Grid (unchanged)
               if (_items.isEmpty)
                 SliverFillRemaining(
                   child: Center(

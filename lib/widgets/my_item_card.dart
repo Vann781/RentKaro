@@ -132,7 +132,7 @@ class _MyItemCardState extends State<MyItemCard> {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        '\$${widget.item.pricePerDay.toStringAsFixed(2)} / day',
+                        '${widget.item.pricePerDay.toStringAsFixed(2)} / day',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,

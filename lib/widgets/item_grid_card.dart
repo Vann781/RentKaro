@@ -104,7 +104,7 @@ class ItemGridCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${item.pricePerDay.toStringAsFixed(2)}',
+                        '${item.pricePerDay.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,

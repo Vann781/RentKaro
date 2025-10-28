@@ -1,10 +1,89 @@
+//plugins {
+//    id("com.android.application")
+//    // START: FlutterFire Configuration
+//    id("com.google.gms.google-services")
+//    // END: FlutterFire Configuration
+//    id("kotlin-android")
+//    id("dev.flutter.flutter-gradle-plugin")
+//}
+//
+//android {
+//    namespace = "com.example.rentkaro_frontend"
+//    compileSdk = flutter.compileSdkVersion
+//    ndkVersion = "27.0.12077973"
+//
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_1_8
+//        targetCompatibility = JavaVersion.VERSION_1_8
+//        isCoreLibraryDesugaringEnabled = true
+//    }
+//    kotlinOptions {
+//        jvmTarget = JavaVersion.VERSION_1_8.toString()
+//    }
+//
+//    defaultConfig {
+//        applicationId = "com.example.rentkaro_frontend"
+//        minSdk = 23
+//        targetSdk = 34
+//        versionCode = flutter.versionCode
+//        versionName = flutter.versionName
+//    }
+//
+//    signingConfigs {
+//        // NOTE: You would normally load key properties from a separate file here
+//        create("release") {
+//            // You MUST replace these placeholder values with your actual keystore details
+//            keyAlias = "your_key_alias"
+//            keyPassword = "your_key_password"
+//            storeFile = file("path/to/your/keystore.jks") // Change path
+//            storePassword = "your_store_password"
+//        }
+//    }
+//
+//
+//    buildTypes {
+//        release {
+//            isMinifyEnabled = true
+//            isShrinkResources = true
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
+//            signingConfig = signingConfigs.getByName("release")
+//        }
+//    }
+//}
+//
+//flutter {
+//    source = "../.."
+//}
+//
+//// --- FIX: DEPENDENCIES BLOCK MOVED TO CORRECT LOCATION (OUTSIDE 'android') ---
+//dependencies {
+//    // This provides the necessary Java 8+ features for the local notifications package
+//    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+//}
+//// --- END FIX ---
+
+
+
+import java.util.Properties
+import java.io.FileInputStream
+
+// --- 1. LOAD THE KEYSTORE PROPERTIES FILE (located in the android/ directory) ---
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    // Read the key.properties file into the keystoreProperties object
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
     // END: FlutterFire Configuration
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -13,45 +92,46 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
-//    compileOptions {
-//        sourceCompatibility = JavaVersion.VERSION_11
-//        targetCompatibility = JavaVersion.VERSION_11
-//    }
-
     compileOptions {
-        // Use assignment operator (=) and qualify JavaVersion correctly
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-
-        // CRITICAL FIX: Enable Desugaring for flutter_local_notifications
         isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
-//        jvmTarget = JavaVersion.VERSION_11.toString()
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.rentkaro_frontend"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        // --- 2. CREATE RELEASE CONFIG USING LOADED PROPERTIES ---
+        create("release") {
+            // Read values directly from the loaded Properties object
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+
+            // File must be correctly referenced using the path from key.properties
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // --- REFERENCE THE NEW RULES FILE ---
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro" // <-- REFERENCE THE FILE HERE
+                "proguard-rules.pro"
             )
-            // --- END REFERENCE ---
+            // Use the fully defined release signing config
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -60,7 +140,7 @@ android {
 flutter {
     source = "../.."
 }
+
 dependencies {
-    // This provides the necessary Java 8+ features for the local notifications package
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4") // <-- ADD THIS
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

@@ -430,6 +430,7 @@ router.get('/nearby', protect, async (req, res) => {
                     _id: 1, title: "$name", description: 1, pricePerDay: "$rentalPrice", category: 1, imageUrl: 1,
                     isAvailable: 1, location: 1, distance: 1,
                     ownerUsername: { $arrayElemAt: ["$ownerDetails.username", 0] },
+                    ownerProfilePic: { $arrayElemAt: ["$ownerDetails.profilePicUrl", 0] },
                     ownerId: "$owner",
                 }
             },
@@ -463,6 +464,7 @@ router.get('/my', protect, async (req, res) => {
                     _id: 1, title: "$name", description: 1, pricePerDay: "$rentalPrice", category: 1, imageUrl: 1,
                     isAvailable: 1, location: 1, distance: { $literal: 0 },
                     ownerUsername: { $arrayElemAt: ["$ownerDetails.username", 0] },
+                    ownerProfilePic: { $arrayElemAt: ["$ownerDetails.profilePicUrl", 0] },
                     ownerId: "$owner",
                 }
             },
