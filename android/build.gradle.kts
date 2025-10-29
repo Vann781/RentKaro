@@ -39,6 +39,7 @@ buildscript {
         // --- CRITICAL FIX: ADD DESUGARING LIBRARY CLASSPATH ---
         // This makes the desugaring library available for the app module to use.
         classpath("com.android.tools:desugar_jdk_libs:2.1.4")
+
     }
 }
 

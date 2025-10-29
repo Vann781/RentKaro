@@ -107,6 +107,8 @@ android {
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -125,8 +127,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false   // <-- CHANGE THIS TO FALSE
-            isShrinkResources = false
+            isMinifyEnabled = true  // <-- CHANGE THIS TO FALSE
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -143,4 +145,6 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // --- ADD MULTIDEX DEPENDENCY HERE ---
+    implementation("androidx.multidex:multidex:2.0.1")
 }

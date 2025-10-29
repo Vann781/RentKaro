@@ -225,7 +225,8 @@ class AuthService {
 
         return null;
       } else {
-        print("Login failed: ${response.body}");
+        print("LOGIN FAILURE CODE: ${response.statusCode}");
+        print("LOGIN FAILURE BODY: ${response.body}");
         return null;
       }
     } catch (e) {
